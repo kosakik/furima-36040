@@ -44,6 +44,11 @@ RSpec.describe Item, type: :model do
     end
 
     context '商品出品できない場合' do
+      it "userが紐付いていなければ出品できない" do
+        @item.user = nil
+        @item.valid?
+        expect(@item.errors.full_messages).to include("User must exist")
+      end
 
       it "imageが空では出品できない" do
         @item.image = nil
@@ -99,8 +104,20 @@ RSpec.describe Item, type: :model do
         expect(@item.errors.full_messages).to include("Price can't be blank")
       end
 
-      it "priceは、300〜9999999の範囲外では出品できない" do
+      it "priceに半角数字以外が含まれている場合は出品できない" do
+        @item.price = 'test'
+        @item.valid?
+        expect(@item.errors.full_messages).to include("Price is out of setting range")
+      end
+
+      it "priceは、300未満では出品できない" do
         @item.price = '299'
+        @item.valid?
+        expect(@item.errors.full_messages).to include("Price is out of setting range")
+      end
+
+      it "priceは、9999999より大きい値では出品できない" do
+        @item.price = '10000000'
         @item.valid?
         expect(@item.errors.full_messages).to include("Price is out of setting range")
       end
