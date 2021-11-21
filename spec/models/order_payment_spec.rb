@@ -2,7 +2,10 @@ require 'rails_helper'
 
 RSpec.describe OrderPayment, type: :model do
   before do
-    @order_payment = FactoryBot.build(:order_payment)
+    @user = FactoryBot.create(:user)
+    @item = FactoryBot.create(:item)
+    @order_payment = FactoryBot.build(:order_payment, user_id: @user.id, item_id: @item.id)
+    sleep 0.1
   end
 
   describe '商品購入機能' do
@@ -93,6 +96,11 @@ RSpec.describe OrderPayment, type: :model do
       end
       it 'phone_numberは、12桁以上あると保存できない' do
         @order_payment.phone_number = '090123456789'
+        @order_payment.valid?
+        expect(@order_payment.errors.full_messages).to include('Phone number is invalid')
+      end
+      it 'phone_numberは、10桁未満だと保存できない' do
+        @order_payment.phone_number = '090123456'
         @order_payment.valid?
         expect(@order_payment.errors.full_messages).to include('Phone number is invalid')
       end
