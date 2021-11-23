@@ -104,7 +104,7 @@ RSpec.describe OrderPayment, type: :model do
         @order_payment.valid?
         expect(@order_payment.errors.full_messages).to include('Phone number is invalid')
       end
-      it 'takenは、空だと保存できない' do
+      it 'tokenは、空だと保存できない' do
         @order_payment.token = nil
         @order_payment.valid?
         expect(@order_payment.errors.full_messages).to include("Token can't be blank")
